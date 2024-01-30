@@ -1,8 +1,9 @@
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
-import { FastifyPluginAsync, FastifyRequest } from 'fastify'
-import { OtherPokemonClass, PokemonEntity } from '../../entities/Pokemon.entity'
-import { TypeNullable } from '../../types/helpers'
+import { FastifyPluginAsync } from 'fastify'
+import { PokemonEntity } from '../../entities/Pokemon.entity'
+import { TypePokemon, TypeResistant } from '../../types/helpers'
+import { ResistantEntity } from '../../entities/Resistant.entity'
 
 export const pokemon: FastifyPluginAsync = async (fastify) => {
   const app = fastify.withTypeProvider<TypeBoxTypeProvider>()
@@ -14,92 +15,44 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
           Type.Object({
             limit: Type.Number(),
             offset: Type.Number(),
-            types: Type.Array(Type.String(), { default: [] }),
+            type: Type.String(),
             name: Type.String(),
           })
         ),
         response: {
           200: {
-            data: Type.Array(
-              Type.Object({
-                id: Type.Number(),
-                name: Type.String(),
-                classification: Type.String(),
-                minWeight: Type.String(),
-                maxHeight: Type.String(),
-                fleeRate: Type.Number(),
-                evolutionRequirementAmount: TypeNullable(Type.Number()),
-                evolutionRequirementName: TypeNullable(Type.String()),
-                maxCP: Type.Number(),
-                maxHP: Type.Number(),
-                fastAttacks: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                    type: Type.String(),
-                    damage: Type.Number(),
-                  })
-                ),
-                specialAttacks: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                    type: Type.String(),
-                    damage: Type.Number(),
-                  })
-                ),
-                commonCaptureArea: TypeNullable(Type.String()),
-                otherPokemonClass: TypeNullable(Type.Enum(OtherPokemonClass)),
-                types: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                  })
-                ),
-                resistantTypes: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                  })
-                ),
-                weaknessesTypes: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                  })
-                ),
-                evolutions: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                    id: Type.Number(),
-                  })
-                ),
-                previousEvolutions: Type.Array(
-                  Type.Object({
-                    name: Type.String(),
-                    id: Type.Number(),
-                  })
-                ),
-              })
-            ),
+            data: Type.Array(TypePokemon()),
           },
         },
       },
     },
-    async (request: FastifyRequest) => {
-      const { limit, offset, types, name } = request.query
+    async (request) => {
+      const { limit, offset, type, name } = request.query
       const { em } = request
       const queriedPokemons = await em.findAll(PokemonEntity, {
         ...(limit && { limit }),
         ...(offset && { offset }),
-        ...(((Array.isArray(types) && types.length > 0) || name) && {
+        where: {
+          types: {
+            $some: {
+              name: ['Poison'],
+            },
+          },
+        },
+        ...((type || name) && {
           where: {
-            // current logic forces $in behaviour, so if we have ['Bug', 'Flying']
-            // in array, it will find any match with at least one matched property
-            ...(Array.isArray(types) &&
-              types.length > 0 && {
-                types,
-              }),
+            ...(type && {
+              types: {
+                $some: {
+                  name: type,
+                },
+              },
+            }),
             // current logic supports partial results, e.g. if searching for "saur",
             // you get Ivysaur, Bulbasaur, etc.
             ...(name && {
               name: {
-                $ilike: `%${name as string}%`,
+                $ilike: `%${name}%`,
               },
             }),
           },
@@ -130,6 +83,111 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
       //  I want to spend on this
       // TODO: join other properties, like types, evolutions, etc.
       return { data: queriedPokemons }
+    }
+  )
+
+  app.get(
+    '/id/:id',
+    {
+      schema: {
+        params: Type.Object({
+          id: Type.Number(),
+        }),
+        response: {
+          200: {
+            data: TypePokemon(),
+          },
+        },
+      },
+    },
+    async (request) => {
+      const {
+        em,
+        params: { id: pokemonId },
+      } = request
+      // it could be a good idea to use findOneOrFail
+      const queriedPokemon = await em.findOne(
+        PokemonEntity,
+        {
+          id: Number(pokemonId),
+        },
+        {
+          populate: [
+            'fastAttacks',
+            'specialAttacks',
+            'types',
+            'resistantTypes',
+            'weaknessesTypes',
+            'evolutions',
+            'previousEvolutions',
+          ],
+        }
+      )
+      return { data: queriedPokemon }
+    }
+  )
+
+  app.get(
+    '/name/:name',
+    {
+      schema: {
+        params: Type.Object({
+          name: Type.String(),
+        }),
+        response: {
+          200: {
+            data: TypePokemon(),
+          },
+        },
+      },
+    },
+    async (request) => {
+      const {
+        em,
+        params: { name },
+      } = request
+      // it could be a good idea to use findOneOrFail
+      const queriedPokemon = await em.findOne(
+        PokemonEntity,
+        {
+          name: {
+            // using $ilike here just to have it case-insensitive
+            $ilike: name,
+          },
+        },
+        {
+          populate: [
+            'fastAttacks',
+            'specialAttacks',
+            'types',
+            'resistantTypes',
+            'weaknessesTypes',
+            'evolutions',
+            'previousEvolutions',
+          ],
+        }
+      )
+      return { data: queriedPokemon }
+    }
+  )
+
+  app.get(
+    '/types',
+    {
+      schema: {
+        response: {
+          200: {
+            data: Type.Array(TypeResistant()),
+          },
+        },
+      },
+    },
+    async (request) => {
+      const { em } = request
+      // it could be a good idea to use findOneOrFail
+      const queriedResistants = await em.findAll(ResistantEntity)
+      console.log('queriedResistants', queriedResistants)
+      return { data: queriedResistants }
     }
   )
 }

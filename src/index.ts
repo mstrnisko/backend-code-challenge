@@ -14,7 +14,7 @@ void (async () => {
 
   void fastify.register(routes)
 
-  fastify.addHook('onRequest', (request, reply, done) => {
+  fastify.addHook('onRequest', (request, _, done) => {
     // adds forked EM to every request in fastify
     request.em = em.fork()
     done()
