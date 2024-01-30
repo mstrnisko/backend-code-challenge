@@ -1,21 +1,18 @@
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { EntityManager, MikroORM } from '@mikro-orm/postgresql'
 import Fastify from 'fastify'
 import mikroOrmConfig from './mikro-orm.config'
-import { pokemon } from './routes/pokemon/pokemon'
+import { routes } from './routes/routes'
 
 void (async () => {
   const fastify = Fastify({
     logger: true,
-  })
+  }).withTypeProvider<TypeBoxTypeProvider>()
 
   const orm = await MikroORM.init(mikroOrmConfig)
   const em = orm.em as EntityManager
 
-  await fastify.register(pokemon, { prefix: 'pokemon' })
-
-  fastify.get('/healtheck', async () => {
-    return { status: '200' }
-  })
+  void fastify.register(routes)
 
   fastify.addHook('onRequest', (request, reply, done) => {
     // adds forked EM to every request in fastify

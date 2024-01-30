@@ -11,7 +11,7 @@ import { AttackEntity } from './Attack.entity'
 import { BaseEntity } from './BaseEntity.entity'
 import { ResistantEntity } from './Resistant.entity'
 
-enum OtherPokemonClass {
+export enum OtherPokemonClass {
   Legendary = 'LEGENDARY',
   Mythic = 'MYTHIC',
 }

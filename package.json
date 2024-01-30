@@ -14,12 +14,14 @@
     "useTsNode": true
   },
   "dependencies": {
+    "@fastify/type-provider-typebox": "^4.0.0",
     "@mikro-orm/cli": "^6.0.5",
     "@mikro-orm/core": "^6.0.5",
     "@mikro-orm/migrations": "^6.0.5",
     "@mikro-orm/postgresql": "^6.0.5",
     "@mikro-orm/reflection": "^6.0.5",
     "@mikro-orm/seeder": "^6.0.5",
+    "@sinclair/typebox": "^0.32.13",
     "@types/node": "^20.11.9",
     "@types/ramda": "^0.29.10",
     "fastify": "^4.25.2",

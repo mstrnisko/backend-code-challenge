@@ -25,6 +25,7 @@
     "declaration": true,
     "experimentalDecorators": true,
     "outDir": "dist",
+    "useDefineForClassFields": false,
   },
   "include": ["@types", "src"],
   "ts-node": {
