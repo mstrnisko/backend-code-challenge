@@ -16,7 +16,7 @@ Be aware that even though it's a simple challenge, it still takes some time to s
 
 ### 1. Business requirements
 
-You are provided with a catalog of Pokemons (check out [pokemons.json](./pokemons.json)). The catalog includes basic information about Pokemons, their statistics, and relationships. Your task is to implement an API that would serve data needed by a website where users can browse the catalog and save their favorite Pokemon.
+You are provided with a catalog of Pokemons (check out [pokemons.json](src/seeders/pokemons.json)). The catalog includes basic information about Pokemons, their statistics, and relationships. Your task is to implement an API that would serve data needed by a website where users can browse the catalog and save their favorite Pokemon.
 
 > 💡 **_Hint:_**  We're testing your **`🧠 Analytical mind`** skills. You have a data file, but you don't have a proper specification.
 
