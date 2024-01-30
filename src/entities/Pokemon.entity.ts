@@ -10,6 +10,7 @@ import {
 import { AttackEntity } from './Attack.entity'
 import { BaseEntity } from './BaseEntity.entity'
 import { ResistantEntity } from './Resistant.entity'
+import { UserEntity } from './User.entity'
 
 export enum OtherPokemonClass {
   Legendary = 'LEGENDARY',
@@ -106,4 +107,10 @@ export class PokemonEntity extends BaseEntity {
   previousEvolutions: Collection<PokemonEntity> = new Collection<PokemonEntity>(
     this
   )
+
+  @ManyToMany({
+    entity: () => UserEntity,
+    mappedBy: 'favouritePokemons',
+  })
+  favouritedBy: Collection<UserEntity> = new Collection<UserEntity>(this)
 }

@@ -14,6 +14,7 @@
     "useTsNode": true
   },
   "dependencies": {
+    "@faker-js/faker": "^8.4.0",
     "@fastify/type-provider-typebox": "^4.0.0",
     "@mikro-orm/cli": "^6.0.5",
     "@mikro-orm/core": "^6.0.5",

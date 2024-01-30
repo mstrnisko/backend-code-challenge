@@ -1,5 +1,4 @@
 import { FastifyPluginAsync } from 'fastify'
-import { id } from './pokemon/[id]'
 import { pokemon } from './pokemon/pokemon'
 
 export const routes: FastifyPluginAsync = async (fastify) => {
