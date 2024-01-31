@@ -6,9 +6,9 @@ import { SeedManager } from '@mikro-orm/seeder'
 export default defineConfig({
   // for simplicity, we use the SQLite database, as it's available pretty much everywhere
   driver: PostgreSqlDriver,
-  dbName: 'brainio',
-  password: 'postgres',
-  port: 5432,
+  dbName: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: Number(process.env.POSTGRES_PORT),
   // folder-based discovery setup, using common filename suffix
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],

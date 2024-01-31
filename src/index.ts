@@ -1,3 +1,5 @@
+// eslint-disable-next-line simple-import-sort/imports
+import 'dotenv/config'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUi from '@fastify/swagger-ui'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
@@ -21,10 +23,6 @@ void (async () => {
         title: 'Brainsoft BE code challange',
         version: '1.0.0',
       },
-    },
-    transform: ({ schema, url }) => {
-      console.log('schema', schema)
-      return { schema, url }
     },
   })
   await fastify.register(fastifySwaggerUi, {
@@ -62,6 +60,8 @@ void (async () => {
       await fastify.ready()
       fastify.swagger()
       await fastify.listen({ port: 3000 })
+      console.log(`App is listening on: ${fastify.listeningOrigin}`)
+      console.log(`Swagger is listening on: ${fastify.listeningOrigin}/docs`)
     } catch (err) {
       fastify.log.error(err)
       console.log('Closing db')
