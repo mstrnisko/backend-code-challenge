@@ -10,8 +10,8 @@ export class PokemonSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     // this whole seeder could be broken into smaller pieces like Attack and
     // Resistant, but for the sake of the demo, I think this is enough
-    const hashMapOfPokemons = new Map()
     const formattedData = pokemons.reduce(
+      // false error, however, I don't really think it's relevant for this demo
       (acc, currVal) => {
         const resistants = [
           ...acc.resistants,
@@ -52,43 +52,64 @@ export class PokemonSeeder extends Seeder {
           }),
           ...(currVal['Common Capture Area'] && {
             commonCaptureArea: Object.keys(currVal).find(
-              (key) => currVal[key] === 'Common Capture Area'
+              (key) =>
+                currVal[key as keyof typeof currVal] === 'Common Capture Area'
             ),
           }),
           ...(currVal['Pokémon Class'] && {
             otherPokemonClass: Object.keys(currVal).find(
-              (key) => currVal[key] === 'Pokémon Class'
+              (key) => currVal[key as keyof typeof currVal] === 'Pokémon Class'
             ),
           }),
           types: currVal.types,
           resistantTypes: currVal.resistant,
           weaknessesTypes: currVal.weaknesses,
-          ...(currVal.evolutions?.length > 0 && {
-            evolutions: currVal.evolutions.map((evolution) => evolution.id),
-          }),
-          ...(currVal['Previous evolution(s)']?.length > 0 && {
-            previousEvolutions: currVal['Previous evolution(s)'].map(
-              (evolution) => evolution.id
-            ),
-          }),
+          ...(currVal.evolutions &&
+            currVal.evolutions.length > 0 && {
+              evolutions: currVal.evolutions.map((evolution) => evolution.id),
+            }),
+          ...(currVal['Previous evolution(s)'] &&
+            currVal['Previous evolution(s)'].length > 0 && {
+              previousEvolutions: currVal['Previous evolution(s)'].map(
+                (evolution) => evolution.id
+              ),
+            }),
         }
         const data = [...acc.data, newPokemon]
-        hashMapOfPokemons.set(newPokemon.id, newPokemon)
         return { resistants, attacks, data }
       },
       {
-        resistants: [],
-        attacks: [],
-        data: [],
+        resistants: [] as string[],
+        attacks: [] as {
+          name: string
+          type: string
+          damage: number
+        }[],
+        data: [] as (Omit<
+          PokemonEntity,
+          | 'evolutions'
+          | 'previousEvolutions'
+          | 'createdAt'
+          | 'updatedAt'
+          | 'favouritedBy'
+          | 'fastAttacks'
+          | 'specialAttacks'
+          | 'otherPokemonClass'
+          | 'types'
+          | 'resistantTypes'
+          | 'weaknessesTypes'
+        > & {
+          types: string[]
+          resistantTypes: string[]
+          weaknessesTypes: string[]
+          otherPokemonClass?: string
+          fastAttacks: string[]
+          specialAttacks: string[]
+          evolutions?: number[]
+          previousEvolutions?: number[]
+        })[],
       }
-    ) as {
-      resistants: string[]
-      attacks: { name: string; type: string; damage: number }[]
-      data: (Omit<PokemonEntity, 'evolutions' | 'previousEvolutions'> & {
-        evolutions?: number[]
-        previousEvolutions?: number[]
-      })[]
-    }
+    )
     const uniqueResistants = [...new Set(formattedData.resistants)]
     const uniqueAttacks = R.uniqBy((val) => val.name, formattedData.attacks)
     uniqueResistants.forEach((uniqueResistant) => {
@@ -96,13 +117,22 @@ export class PokemonSeeder extends Seeder {
       em.persist(newEntity)
     })
     uniqueAttacks.forEach(({ name, type, damage }) => {
-      const newEntity = em.create(AttackEntity, { name, type, damage })
+      const newEntity = em.create(AttackEntity, {
+        name,
+        // should first query from db to fix this TS error, but this works
+        // anyway thanks to the `name` being PK, so just type-forcing ths
+        type: type as unknown as ResistantEntity,
+        damage,
+      })
       em.persist(newEntity)
     })
     formattedData.data.forEach((pokemon) => {
       const newEntity = em.create(
         PokemonEntity,
-        R.omit(['evolutions', 'previousEvolutions'], pokemon) as PokemonEntity
+        R.omit(
+          ['evolutions', 'previousEvolutions'],
+          pokemon
+        ) as unknown as PokemonEntity
       )
       em.persist(newEntity)
     })
@@ -111,14 +141,16 @@ export class PokemonSeeder extends Seeder {
       if (pokemon.evolutions || pokemon.previousEvolutions) {
         const ref = em.getReference(PokemonEntity, pokemon.id)
         if (pokemon.evolutions) {
-          ref.evolutions = pokemon.evolutions.map((evolutionId) =>
-            em.getReference(PokemonEntity, evolutionId)
-          )
+          pokemon.evolutions.forEach((evolutionId) => {
+            ref.evolutions.add(em.getReference(PokemonEntity, evolutionId))
+          })
         }
         if (pokemon.previousEvolutions) {
-          ref.previousEvolutions = pokemon.previousEvolutions.map(
-            (evolutionId) => em.getReference(PokemonEntity, evolutionId)
-          )
+          pokemon.previousEvolutions.forEach((evolutionId) => {
+            ref.previousEvolutions.add(
+              em.getReference(PokemonEntity, evolutionId)
+            )
+          })
         }
       }
     })

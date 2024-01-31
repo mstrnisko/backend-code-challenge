@@ -2,6 +2,7 @@ import { Migrator } from '@mikro-orm/migrations'
 import { defineConfig, PostgreSqlDriver } from '@mikro-orm/postgresql'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
 import { SeedManager } from '@mikro-orm/seeder'
+import 'dotenv/config'
 
 export default defineConfig({
   // for simplicity, we use the SQLite database, as it's available pretty much everywhere

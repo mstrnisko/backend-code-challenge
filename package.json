@@ -8,7 +8,10 @@
     "migrate:seed": "npm run migrate:fresh && npm run migrate:only-seed",
     "build": "tsc",
     "build-watch": "tsc -w",
-    "dev": "ts-node-dev --transpile-only src/index.ts"
+    "dev": "ts-node-dev --transpile-only src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "eslint": "eslint --ext .js,.jsx,.ts,.tsx",
+    "lint": "npm run typecheck && npm run eslint"
   },
   "mikro-orm": {
     "useTsNode": true
