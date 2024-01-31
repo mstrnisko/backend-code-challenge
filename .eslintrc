@@ -6,6 +6,7 @@
     "@sudolabs-io/eslint-config-sudolabs/with/lodash"
   ],
   "rules": {
+    "no-param-reassign": "off",
     "import/no-cycle": "off",
     "require-await": "off",
     "@typescript-eslint/require-await": "off",

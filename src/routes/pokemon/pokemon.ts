@@ -2,8 +2,12 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
 import { FastifyPluginAsync } from 'fastify'
 import { PokemonEntity } from '../../entities/Pokemon.entity'
-import { TypePokemon, TypeResistant } from '../../types/helpers'
 import { ResistantEntity } from '../../entities/Resistant.entity'
+import { TypePokemon, TypeResistant } from '../../types/helpers'
+import {
+  onRequestValidation,
+  TypeOnRequestValidation,
+} from '../../utils/onRequestValidation'
 
 export const pokemon: FastifyPluginAsync = async (fastify) => {
   const app = fastify.withTypeProvider<TypeBoxTypeProvider>()
@@ -17,6 +21,7 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
             offset: Type.Number(),
             type: Type.String(),
             name: Type.String(),
+            favourite: Type.Boolean(),
           })
         ),
         response: {
@@ -27,20 +32,26 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
       },
     },
     async (request) => {
-      const { limit, offset, type, name } = request.query
+      const {
+        query: { limit, offset, type, name, favourite },
+        userAuth,
+      } = request
       const { em } = request
+      let pokemonIds: number[] = []
+      if (userAuth && favourite) {
+        await userAuth.favouritePokemons.init()
+        pokemonIds = userAuth.favouritePokemons.getIdentifiers()
+      }
       const queriedPokemons = await em.findAll(PokemonEntity, {
         ...(limit && { limit }),
         ...(offset && { offset }),
-        where: {
-          types: {
-            $some: {
-              name: ['Poison'],
-            },
-          },
-        },
-        ...((type || name) && {
+        ...((type || name || pokemonIds.length > 0) && {
           where: {
+            ...(pokemonIds.length > 0 && {
+              id: {
+                $in: pokemonIds,
+              },
+            }),
             ...(type && {
               types: {
                 $some: {
@@ -78,10 +89,6 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
           'previousEvolutions',
         ],
       })
-      // TODO: filter by favourite
-      // TODO: maybe implement cursor based pagination? dunno how much time
-      //  I want to spend on this
-      // TODO: join other properties, like types, evolutions, etc.
       return { data: queriedPokemons }
     }
   )
@@ -186,8 +193,84 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
       const { em } = request
       // it could be a good idea to use findOneOrFail
       const queriedResistants = await em.findAll(ResistantEntity)
-      console.log('queriedResistants', queriedResistants)
       return { data: queriedResistants }
+    }
+  )
+
+  app.patch(
+    '/favourite/:id',
+    {
+      onRequest: onRequestValidation,
+      schema: {
+        params: Type.Object({
+          id: Type.Number(),
+        }),
+        response: {
+          200: {
+            success: Type.Boolean(),
+          },
+          ...TypeOnRequestValidation(),
+        },
+      },
+    },
+    async (request) => {
+      const {
+        em,
+        userAuth,
+        params: { id },
+      } = request
+      const pokemonToSetAsFavourite = await em.findOneOrFail(PokemonEntity, {
+        id,
+      })
+      await userAuth!.favouritePokemons.init()
+      if (
+        !userAuth!.favouritePokemons.find(
+          (innerPokemon) => innerPokemon.id === id
+        )
+      ) {
+        userAuth!.favouritePokemons.add(pokemonToSetAsFavourite)
+        await em.persistAndFlush(userAuth!)
+      }
+
+      return { success: true }
+    }
+  )
+
+  app.delete(
+    '/favourite/:id',
+    {
+      schema: {
+        params: Type.Object({
+          id: Type.Number(),
+        }),
+        response: {
+          200: {
+            success: Type.Boolean(),
+          },
+          ...TypeOnRequestValidation(),
+        },
+      },
+    },
+    async (request) => {
+      const {
+        em,
+        userAuth,
+        params: { id },
+      } = request
+      const pokemonToRemove = await em.findOneOrFail(PokemonEntity, {
+        id,
+      })
+      await userAuth!.favouritePokemons.init()
+      if (
+        userAuth!.favouritePokemons.find(
+          (innerPokemon) => innerPokemon.id === id
+        )
+      ) {
+        userAuth!.favouritePokemons.remove(pokemonToRemove)
+        await em.persistAndFlush(userAuth!)
+      }
+
+      return { success: true }
     }
   )
 }
