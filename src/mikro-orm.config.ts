@@ -7,6 +7,7 @@ import 'dotenv/config'
 export default defineConfig({
   // for simplicity, we use the SQLite database, as it's available pretty much everywhere
   driver: PostgreSqlDriver,
+  host: process.env.APP_HOST,
   dbName: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: Number(process.env.POSTGRES_PORT),

@@ -12,7 +12,7 @@ const config: Config.InitialOptions = {
   ],
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.json',
+      tsconfig: 'tsconfig.test.json',
     },
   },
   moduleNameMapper: {
@@ -20,11 +20,9 @@ const config: Config.InitialOptions = {
     // https://jestjs.io/docs/webpack#handling-static-assets
     '^.+\\.(jpg|jpeg|png|gif|webp|svg)$': `<rootDir>/__mocks__/fileMock.js`,
   },
-  // globalSetup: '<rootDir>/jest.setupHook.js',
-  // setupFilesAfterEnv: ['<rootDir>/src/api/testing/jest.setup.ts'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
   transformIgnorePatterns: ['/node_modules/'],
   moduleDirectories: ['node_modules', 'src'],

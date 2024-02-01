@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  db:
+  db-test:
     image: postgres:16-alpine
     restart: always
     ports:
@@ -12,30 +12,30 @@ services:
     user: '${POSTGRES_USER}'
     healthcheck:
       test: ["CMD", "pg_isready"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 2s
+      timeout: 2s
+      retries: 2
     volumes:
-      - db-volume:/var/lib/postgresql/data
+      - db-test-volume:/var/lib/postgresql/data
     networks:
-      - fastify
+      - fastify-test
     expose:
       - '${POSTGRES_PORT}'
-  api:
+  api-test:
     user: 'fastify'
     build:
       context: .
-      target: 'development'
       dockerfile: Dockerfile
+      target: 'test'
     depends_on:
-      db:
+      db-test:
         condition: service_healthy
     env_file:
-      - .env
+      - .env.test
     environment:
-      APP_HOST: db
+      APP_HOST: db-test
     networks:
-      - fastify
+      - fastify-test
     volumes:
       - ./src:/opt/app/src
     ports:
@@ -44,8 +44,8 @@ services:
       - '${APP_PORT}'
 
 volumes:
-  db-volume:
+  db-test-volume:
 
 networks:
-  fastify:
+  fastify-test:
     driver: bridge
