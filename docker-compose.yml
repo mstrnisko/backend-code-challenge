@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    environment:
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
+    user: '${POSTGRES_USER}'
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - fastify
+    expose:
+      - '${POSTGRES_PORT}'
+  api:
+    user: 'fastify'
+    build:
+      context: .
+      target: 'development'
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      APP_HOST: db
+    networks:
+      - fastify
+    volumes:
+      - ./src:/opt/app/src
+    ports:
+      - '${APP_PORT}:3000'
+    expose:
+      - '${APP_PORT}'
+
+volumes:
+  db-volume:
+
+networks:
+  fastify:
+    driver: bridge

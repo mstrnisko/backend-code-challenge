@@ -1,0 +1,866 @@
+{
+  "namespaces": [
+    "public"
+  ],
+  "name": "public",
+  "tables": [
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "classification": {
+          "name": "classification",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "min_weight": {
+          "name": "min_weight",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "max_weight": {
+          "name": "max_weight",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "min_height": {
+          "name": "min_height",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "max_height": {
+          "name": "max_height",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "flee_rate": {
+          "name": "flee_rate",
+          "type": "real",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "float"
+        },
+        "evolution_requirement_amount": {
+          "name": "evolution_requirement_amount",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "integer"
+        },
+        "evolution_requirement_name": {
+          "name": "evolution_requirement_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
+        "max_cp": {
+          "name": "max_cp",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "max_hp": {
+          "name": "max_hp",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "common_capture_area": {
+          "name": "common_capture_area",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
+        "other_pokemon_class": {
+          "name": "other_pokemon_class",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "enumItems": [
+            "LEGENDARY",
+            "MYTHIC"
+          ],
+          "mappedType": "enum"
+        }
+      },
+      "name": "pokemon",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_1_id": {
+          "name": "pokemon_entity_1_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "pokemon_entity_2_id": {
+          "name": "pokemon_entity_2_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "pokemon_previous_evolutions",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_previous_evolutions_pkey",
+          "columnNames": [
+            "pokemon_entity_1_id",
+            "pokemon_entity_2_id"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_previous_evolutions_pokemon_entity_1_id_foreign": {
+          "constraintName": "pokemon_previous_evolutions_pokemon_entity_1_id_foreign",
+          "columnNames": [
+            "pokemon_entity_1_id"
+          ],
+          "localTableName": "public.pokemon_previous_evolutions",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_previous_evolutions_pokemon_entity_2_id_foreign": {
+          "constraintName": "pokemon_previous_evolutions_pokemon_entity_2_id_foreign",
+          "columnNames": [
+            "pokemon_entity_2_id"
+          ],
+          "localTableName": "public.pokemon_previous_evolutions",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_1_id": {
+          "name": "pokemon_entity_1_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "pokemon_entity_2_id": {
+          "name": "pokemon_entity_2_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "pokemon_evolutions",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_evolutions_pkey",
+          "columnNames": [
+            "pokemon_entity_1_id",
+            "pokemon_entity_2_id"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_evolutions_pokemon_entity_1_id_foreign": {
+          "constraintName": "pokemon_evolutions_pokemon_entity_1_id_foreign",
+          "columnNames": [
+            "pokemon_entity_1_id"
+          ],
+          "localTableName": "public.pokemon_evolutions",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_evolutions_pokemon_entity_2_id_foreign": {
+          "constraintName": "pokemon_evolutions_pokemon_entity_2_id_foreign",
+          "columnNames": [
+            "pokemon_entity_2_id"
+          ],
+          "localTableName": "public.pokemon_evolutions",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "resistant",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "resistant_pkey",
+          "columnNames": [
+            "name"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "resistant_entity_name": {
+          "name": "resistant_entity_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "pokemon_weaknesses_types",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_weaknesses_types_pkey",
+          "columnNames": [
+            "pokemon_entity_id",
+            "resistant_entity_name"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_weaknesses_types_pokemon_entity_id_foreign": {
+          "constraintName": "pokemon_weaknesses_types_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.pokemon_weaknesses_types",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_weaknesses_types_resistant_entity_name_foreign": {
+          "constraintName": "pokemon_weaknesses_types_resistant_entity_name_foreign",
+          "columnNames": [
+            "resistant_entity_name"
+          ],
+          "localTableName": "public.pokemon_weaknesses_types",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.resistant",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "resistant_entity_name": {
+          "name": "resistant_entity_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "pokemon_types",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_types_pkey",
+          "columnNames": [
+            "pokemon_entity_id",
+            "resistant_entity_name"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_types_pokemon_entity_id_foreign": {
+          "constraintName": "pokemon_types_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.pokemon_types",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_types_resistant_entity_name_foreign": {
+          "constraintName": "pokemon_types_resistant_entity_name_foreign",
+          "columnNames": [
+            "resistant_entity_name"
+          ],
+          "localTableName": "public.pokemon_types",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.resistant",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "resistant_entity_name": {
+          "name": "resistant_entity_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "pokemon_resistant_types",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_resistant_types_pkey",
+          "columnNames": [
+            "pokemon_entity_id",
+            "resistant_entity_name"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_resistant_types_pokemon_entity_id_foreign": {
+          "constraintName": "pokemon_resistant_types_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.pokemon_resistant_types",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_resistant_types_resistant_entity_name_foreign": {
+          "constraintName": "pokemon_resistant_types_resistant_entity_name_foreign",
+          "columnNames": [
+            "resistant_entity_name"
+          ],
+          "localTableName": "public.pokemon_resistant_types",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.resistant",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "type_name": {
+          "name": "type_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "damage": {
+          "name": "damage",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "attack",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "attack_pkey",
+          "columnNames": [
+            "name"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "attack_type_name_foreign": {
+          "constraintName": "attack_type_name_foreign",
+          "columnNames": [
+            "type_name"
+          ],
+          "localTableName": "public.attack",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.resistant",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "attack_entity_name": {
+          "name": "attack_entity_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "pokemon_special_attacks",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_special_attacks_pkey",
+          "columnNames": [
+            "pokemon_entity_id",
+            "attack_entity_name"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_special_attacks_pokemon_entity_id_foreign": {
+          "constraintName": "pokemon_special_attacks_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.pokemon_special_attacks",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_special_attacks_attack_entity_name_foreign": {
+          "constraintName": "pokemon_special_attacks_attack_entity_name_foreign",
+          "columnNames": [
+            "attack_entity_name"
+          ],
+          "localTableName": "public.pokemon_special_attacks",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.attack",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "attack_entity_name": {
+          "name": "attack_entity_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "pokemon_fast_attacks",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "pokemon_fast_attacks_pkey",
+          "columnNames": [
+            "pokemon_entity_id",
+            "attack_entity_name"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "pokemon_fast_attacks_pokemon_entity_id_foreign": {
+          "constraintName": "pokemon_fast_attacks_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.pokemon_fast_attacks",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "pokemon_fast_attacks_attack_entity_name_foreign": {
+          "constraintName": "pokemon_fast_attacks_attack_entity_name_foreign",
+          "columnNames": [
+            "attack_entity_name"
+          ],
+          "localTableName": "public.pokemon_fast_attacks",
+          "referencedColumnNames": [
+            "name"
+          ],
+          "referencedTableName": "public.attack",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "unsigned": true,
+          "autoincrement": true,
+          "primary": true,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "mappedType": "datetime"
+        },
+        "auth_token": {
+          "name": "auth_token",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        }
+      },
+      "name": "user",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "user_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "user_entity_id": {
+          "name": "user_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "pokemon_entity_id": {
+          "name": "pokemon_entity_id",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        }
+      },
+      "name": "user_favourite_pokemons",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "user_favourite_pokemons_pkey",
+          "columnNames": [
+            "user_entity_id",
+            "pokemon_entity_id"
+          ],
+          "composite": true,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "user_favourite_pokemons_user_entity_id_foreign": {
+          "constraintName": "user_favourite_pokemons_user_entity_id_foreign",
+          "columnNames": [
+            "user_entity_id"
+          ],
+          "localTableName": "public.user_favourite_pokemons",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.user",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "user_favourite_pokemons_pokemon_entity_id_foreign": {
+          "constraintName": "user_favourite_pokemons_pokemon_entity_id_foreign",
+          "columnNames": [
+            "pokemon_entity_id"
+          ],
+          "localTableName": "public.user_favourite_pokemons",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.pokemon",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    }
+  ],
+  "nativeEnums": {}
+}
