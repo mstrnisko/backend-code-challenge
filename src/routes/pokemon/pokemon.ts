@@ -192,7 +192,11 @@ export const pokemon: FastifyPluginAsync = async (fastify) => {
     async (request) => {
       const { em } = request
       // it could be a good idea to use findOneOrFail
-      const queriedResistants = await em.findAll(ResistantEntity)
+      const queriedResistants = await em.findAll(ResistantEntity, {
+        orderBy: {
+          name: 'asc',
+        },
+      })
       return { data: queriedResistants }
     }
   )

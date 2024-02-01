@@ -21,13 +21,14 @@
     "baseUrl": "src",
     "noUncheckedIndexedAccess": true,
     "incremental": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "declaration": true,
     "experimentalDecorators": true,
     "outDir": "dist",
     "useDefineForClassFields": false,
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["@types", "src"],
+  "include": ["@types", "src", "jest.config.ts"],
   "ts-node": {
     "transpileOnly": true,
   },

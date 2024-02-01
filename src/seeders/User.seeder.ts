@@ -5,8 +5,11 @@ import { UserFactory } from './User.factory'
 
 export class UserSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
-    const users = new UserFactory(em).make(2)
-    users.forEach((user) => {
+    const firstUser = new UserFactory(em).makeOne({ authToken: 'first-token' })
+    const secondUser = new UserFactory(em).makeOne({
+      authToken: 'second-token',
+    })
+    ;[firstUser, secondUser].forEach((user) => {
       const newEntity = em.create(UserEntity, user)
       em.persist(newEntity)
     })
