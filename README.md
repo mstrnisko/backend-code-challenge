@@ -12,7 +12,7 @@ docker-compose up --build
 ```
 
 - Docker supports hot reloading with `tsc` and `nodemon`
-  After starting the server, the docker should output the URL of the app and swagger documentation, but they should be located at `http://localhost:3000` together with `http://localhost:3000/docs
+  After starting the server, the docker should output the URL of the app and swagger documentation, but they should be located at `http://localhost:3000` together with `http://localhost:3000/docs`
 
 ## How to run tests
 
